@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Routine & TO-DO</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@300;400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg:        #060a08;
+  --bg2:       #0b120e;
+  --glass:     rgba(16,28,20,0.85);
+  --glass2:    rgba(255,255,255,0.03);
+  --border:    rgba(255,255,255,0.06);
+  --border-hi: rgba(255,255,255,0.12);
+
+  /* Routine — vivid emerald */
+  --r1: #00ff87;
+  --r2: #00e5a0;
+  --r3: #00c47a;
+  --r-glow: rgba(0,255,135,0.18);
+  --r-glow2: rgba(0,255,135,0.08);
+
+  /* TODO — warm amber-gold */
+  --t1: #ffb347;
+  --t2: #ff8c42;
+  --t3: #e06b20;
+  --t-glow: rgba(255,179,71,0.18);
+  --t-glow2: rgba(255,179,71,0.07);
+
+  --text:  #eef2ee;
+  --muted: #6b7f70;
+  --muted2:#8fa892;
+  --done:  rgba(0,255,135,0.05);
+}
+
+html { scroll-behavior: smooth; }
+
+/* ── GLOBAL SMOOTH ── */
+* { -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans Myanmar', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 16px 100px;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── ambient orbs ── */
+body::before, body::after {
+  content:'';
+  position:fixed;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:0;
+  filter:blur(90px);
+}
+body::before {
+  width:520px; height:520px;
+  top:-120px; left:-80px;
+  background: radial-gradient(circle, rgba(0,255,135,0.08) 0%, transparent 70%);
+}
+body::after {
+  width:400px; height:400px;
+  bottom:-60px; right:-60px;
+  background: radial-gradient(circle, rgba(255,179,71,0.07) 0%, transparent 70%);
+}
+
+.wrap {
+  width:100%; max-width:560px;
+  position:relative; z-index:1;
+  padding-top:48px;
+  animation: rise 0.8s cubic-bezier(.16,1,.3,1) both;
+}
+
+@keyframes rise {
+  from{opacity:0;transform:translateY(32px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ── HEADER ── */
+header {
+  text-align:center;
+  margin-bottom:36px;
+}
+
+.logo-line {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  margin-bottom:8px;
+}
+
+.logo-dot {
+  width:7px; height:7px;
+  border-radius:50%;
+  background: var(--r1);
+  box-shadow: 0 0 12px var(--r1);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:0.5;transform:scale(0.7)}
+}
+
+header h1 {
+  font-family:'Cormorant Garamond',serif;
+  font-weight:300;
+  font-style:italic;
+  font-size:2.6rem;
+  letter-spacing:0.04em;
+  line-height:1;
+  color: var(--text);
+  animation: textFlicker 3.5s ease-in-out infinite;
+  text-shadow:
+    0 0 8px rgba(0,255,135,0.4),
+    0 0 20px rgba(0,255,135,0.2),
+    0 0 40px rgba(0,255,135,0.1);
+}
+
+@keyframes textFlicker {
+  0%,100% {
+    text-shadow:
+      0 0 6px rgba(255,255,255,0.8),
+      0 0 14px rgba(0,255,135,0.7),
+      0 0 30px rgba(0,255,135,0.4),
+      0 0 60px rgba(0,255,135,0.2);
+  }
+  18% {
+    text-shadow:
+      0 0 3px rgba(255,255,255,0.3),
+      0 0 8px rgba(0,255,135,0.2),
+      0 0 15px rgba(0,255,135,0.1);
+  }
+  20% {
+    text-shadow:
+      0 0 8px rgba(255,255,255,1),
+      0 0 20px rgba(0,255,135,0.9),
+      0 0 50px rgba(0,255,135,0.6),
+      0 0 90px rgba(0,255,135,0.3);
+  }
+  45% {
+    text-shadow:
+      0 0 5px rgba(255,255,255,0.6),
+      0 0 16px rgba(0,255,200,0.5),
+      0 0 35px rgba(0,255,135,0.3),
+      0 0 65px rgba(0,200,255,0.15);
+  }
+  70% {
+    text-shadow:
+      0 0 4px rgba(255,255,255,0.4),
+      0 0 10px rgba(0,255,135,0.3),
+      0 0 20px rgba(0,255,135,0.15);
+  }
+  72% {
+    text-shadow:
+      0 0 10px rgba(255,255,255,1),
+      0 0 25px rgba(100,255,200,0.9),
+      0 0 60px rgba(0,255,135,0.7),
+      0 0 100px rgba(0,255,135,0.3);
+  }
+}
+
+header h1 span {
+  background: linear-gradient(135deg, var(--r1), var(--r2));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter: drop-shadow(0 0 8px rgba(0,255,135,0.8)) drop-shadow(0 0 20px rgba(0,255,135,0.5));
+  animation: spanZap 2.8s ease-in-out infinite alternate;
+}
+
+@keyframes spanZap {
+  0%   { filter: drop-shadow(0 0 4px rgba(0,255,135,0.6)) drop-shadow(0 0 12px rgba(0,255,135,0.3)); }
+  40%  { filter: drop-shadow(0 0 12px rgba(0,255,200,1))  drop-shadow(0 0 28px rgba(0,255,135,0.7)) drop-shadow(0 0 50px rgba(0,200,255,0.4)); }
+  60%  { filter: drop-shadow(0 0 6px rgba(0,255,135,0.5)) drop-shadow(0 0 15px rgba(0,255,135,0.3)); }
+  100% { filter: drop-shadow(0 0 16px rgba(100,255,220,1)) drop-shadow(0 0 35px rgba(0,255,135,0.8)) drop-shadow(0 0 70px rgba(0,255,135,0.4)); }
+}
+
+.header-sub {
+  font-size:0.75rem;
+  color:var(--muted);
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  font-weight:400;
+  font-family:'DM Mono', monospace;
+}
+
+/* ── TABS ── */
+.tabs {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  margin-bottom:32px;
+  background: var(--glass);
+  border-radius:18px;
+  border: 1px solid var(--border);
+
+  overflow:hidden;
+  position:relative;
+}
+
+.tabs::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+  pointer-events:none;
+  border-radius:inherit;
+}
+
+.tab-btn {
+  padding:16px 12px;
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  font-family:'Noto Sans Myanmar', sans-serif;
+  font-size:0.86rem;
+  font-weight:600;
+  cursor:pointer;
+  transition: color 0.25s ease, background 0.25s ease, transform 0.15s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  position:relative;
+  letter-spacing:0.02em;
+  user-select:none;
+}
+.tab-btn:active { transform: scale(0.94); }
+
+.tab-btn::after {
+  content:'';
+  position:absolute;
+  bottom:0; left:20%; right:20%;
+  height:2px;
+  border-radius:2px 2px 0 0;
+  opacity:0;
+  transition:opacity 0.3s;
+}
+
+.tab-btn.active-routine {
+  color: var(--r1);
+  text-shadow: 0 0 20px rgba(0,255,135,0.4);
+}
+.tab-btn.active-routine::after {
+  background: linear-gradient(90deg, var(--r1), var(--r2));
+  box-shadow: 0 0 12px var(--r1);
+  opacity:1;
+}
+
+.tab-btn.active-todo {
+  color: var(--t1);
+  text-shadow: 0 0 20px rgba(255,179,71,0.4);
+}
+.tab-btn.active-todo::after {
+  background: linear-gradient(90deg, var(--t1), var(--t2));
+  box-shadow: 0 0 12px var(--t1);
+  opacity:1;
+}
+
+.tab-sep {
+  width:1px;
+  background: var(--border);
+  align-self:stretch;
+  margin: 10px 0;
+}
+
+.tab-badge {
+  font-family:'DM Mono', monospace;
+  font-size:0.65rem;
+  padding:2px 7px;
+  border-radius:100px;
+  font-weight:500;
+}
+
+.active-routine .tab-badge {
+  background: rgba(0,255,135,0.12);
+  color: var(--r1);
+}
+.active-todo .tab-badge {
+  background: rgba(255,179,71,0.12);
+  color: var(--t1);
+}
+.tab-btn:not(.active-routine):not(.active-todo) .tab-badge {
+  background: rgba(255,255,255,0.05);
+  color: var(--muted);
+}
+
+/* ── PANEL ── */
+.panel{display:none}
+.panel.active{display:block;animation:rise 0.35s cubic-bezier(.16,1,.3,1) both}
+
+/* ── INPUT ── */
+.input-wrap {
+  position:relative;
+  margin-bottom:24px;
+}
+
+.input-wrap input, .input-wrap textarea {
+  width:100%;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius:16px;
+  padding:14px 58px 14px 22px;
+  font-size:0.92rem;
+  font-family:'Noto Sans Myanmar', sans-serif;
+  color:var(--text);
+  outline:none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  letter-spacing:0.01em;
+}
+.input-wrap textarea {
+  resize:none;
+  overflow:hidden;
+  min-height:50px;
+  line-height:1.55;
+  display:block;
+}
+.input-wrap textarea::placeholder, .input-wrap input::placeholder { color:var(--muted); font-size:0.8rem; }
+
+#routine-input:focus {
+  border-color: rgba(0,255,135,0.4);
+  box-shadow: 0 0 0 3px rgba(0,255,135,0.07);
+}
+#todo-input:focus {
+  border-color: rgba(255,179,71,0.4);
+  box-shadow: 0 0 0 3px rgba(255,179,71,0.07);
+}
+
+.btn-add {
+  position:absolute;
+  right:8px; top:8px;
+  transform:none;
+  width:40px; height:40px;
+  border:none;
+  border-radius:12px;
+  font-size:1.3rem;
+  color:#000;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition: transform 0.18s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s ease;
+  font-weight:700;
+  line-height:1;
+  user-select:none;
+}
+
+.btn-add-routine { background:linear-gradient(135deg,var(--r1),var(--r3)); box-shadow:0 4px 16px rgba(0,255,135,0.3); }
+.btn-add-routine:hover { transform:scale(1.1); box-shadow:0 6px 24px rgba(0,255,135,0.55); }
+.btn-add-todo { background:linear-gradient(135deg,var(--t1),var(--t3)); box-shadow:0 4px 16px rgba(255,179,71,0.3); }
+.btn-add-todo:hover { transform:scale(1.1); box-shadow:0 6px 24px rgba(255,179,71,0.55); }
+.btn-add:active { transform:scale(0.88) !important; transition-duration:0.08s; }
+
+/* ── STATS ROW ── */
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.stat {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius:14px;
+  padding:14px 10px 12px;
+  text-align:center;
+
+  transition:border-color 0.2s;
+  position:relative;
+  overflow:hidden;
+}
+
+.stat::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);
+}
+
+.stat-num {
+  font-family:'DM Mono',monospace;
+  font-size:1.6rem;
+  font-weight:500;
+  line-height:1;
+  display:block;
+}
+
+.stat-label {
+  font-size:0.68rem;
+  color:var(--muted);
+  margin-top:4px;
+  letter-spacing:0.08em;
+  font-weight:300;
+}
+
+.routine-stat .stat-num { color: var(--r1); }
+.routine-stat:nth-child(2) .stat-num { color: var(--r2); opacity:0.8; }
+.routine-stat:nth-child(3) .stat-num { color: var(--muted2); }
+.todo-stat .stat-num { color: var(--t1); }
+.todo-stat:nth-child(2) .stat-num { color: var(--t2); opacity:0.8; }
+.todo-stat:nth-child(3) .stat-num { color: var(--muted2); }
+
+/* ── PROGRESS ── */
+.progress-card {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius:16px;
+  padding:16px 20px;
+  margin-bottom:22px;
+
+  position:relative;
+  overflow:hidden;
+}
+
+.progress-card::before {
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);
+}
+
+.progress-top {
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  margin-bottom:10px;
+}
+
+.progress-title {
+  font-size:0.7rem;
+  color:var(--muted);
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  font-family:'DM Mono',monospace;
+}
+
+.progress-pct {
+  font-family:'DM Mono',monospace;
+  font-size:1rem;
+  font-weight:500;
+}
+
+.r-text { color: var(--r1); }
+.t-text { color: var(--t1); }
+
+.bar-bg {
+  background: rgba(255,255,255,0.05);
+  border-radius:100px;
+  height:6px;
+  overflow:hidden;
+}
+
+.bar-fill {
+  height:100%;
+  border-radius:100px;
+  transition:width 0.5s cubic-bezier(.16,1,.3,1);
+  width:0%;
+  position:relative;
+}
+
+.bar-fill::after {
+  content:'';
+  position:absolute;
+  right:0; top:0; bottom:0;
+  width:20px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4));
+  border-radius:100px;
+}
+
+.bar-routine { background: linear-gradient(90deg, var(--r3), var(--r1)); box-shadow: 0 0 12px rgba(0,255,135,0.3); }
+.bar-todo    { background: linear-gradient(90deg, var(--t3), var(--t1)); box-shadow: 0 0 12px rgba(255,179,71,0.3); }
+
+/* ── LIST HEADER ── */
+.list-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+  padding: 0 2px;
+}
+
+.list-label {
+  font-size:0.68rem;
+  color:var(--muted);
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  font-family:'DM Mono',monospace;
+}
+
+.hdr-actions { display:flex; gap:8px; }
+
+.pill-btn {
+  background:none;
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-size:0.68rem;
+  padding:4px 12px;
+  border-radius:100px;
+  cursor:pointer;
+  font-family:'DM Mono',monospace;
+  transition: all 0.2s ease, transform 0.15s cubic-bezier(.34,1.56,.64,1);
+  letter-spacing:0.04em;
+  user-select:none;
+}
+.pill-btn:hover { border-color:var(--border-hi); color:var(--text); transform:scale(1.05); }
+.pill-btn:active { transform:scale(0.92) !important; transition-duration:0.08s; }
+
+.pill-btn.green { border-color:rgba(0,255,135,0.2); color:var(--r2); }
+.pill-btn.green:hover { background:rgba(0,255,135,0.07); border-color:rgba(0,255,135,0.4); color:var(--r1); }
+
+.pill-btn.amber { border-color:rgba(255,179,71,0.2); color:var(--t2); }
+.pill-btn.amber:hover { background:rgba(255,179,71,0.07); border-color:rgba(255,179,71,0.4); color:var(--t1); }
+
+/* ── LIST ITEMS ── */
+ul { list-style:none; display:flex; flex-direction:column; gap:8px; }
+
+.item {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius:14px;
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  animation:item-in 0.38s cubic-bezier(.16,1,.3,1) both;
+  transition: border-color 0.2s, background 0.25s, transform 0.2s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s;
+
+  position:relative;
+  overflow:hidden;
+  cursor:default;
+  user-select:none;
+}
+
+.item::before {
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);
+}
+
+@keyframes item-in {
+  from{opacity:0;transform:translateY(10px) scale(0.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+.item:hover { border-color:var(--border-hi); transform:translateX(5px); box-shadow:0 4px 20px rgba(0,0,0,0.3); }
+.item:active { transform:scale(0.98) translateX(2px) !important; transition-duration:0.08s; }
+
+.item.done {
+  background: var(--done);
+  border-color: rgba(0,255,135,0.1);
+}
+
+.num {
+  font-family:'DM Mono',monospace;
+  font-size:0.65rem;
+  font-weight:500;
+  min-width:24px;
+  text-align:center;
+  padding:3px 6px;
+  border-radius:7px;
+  line-height:1.5;
+  letter-spacing:0.04em;
+}
+
+.num-r { color:var(--r1); background:rgba(0,255,135,0.1); }
+.num-t { color:var(--t1); background:rgba(255,179,71,0.1); }
+.item.done .num { color:var(--muted); background:rgba(255,255,255,0.05); }
+
+.check {
+  width:22px; height:22px;
+  border-radius:8px;
+  border:1.5px solid rgba(255,255,255,0.15);
+  cursor:pointer;
+  flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.18s cubic-bezier(.34,1.56,.64,1);
+  user-select:none;
+  position:relative;
+}
+.check:hover { transform:scale(1.15); }
+.check:active { transform:scale(0.88) !important; transition-duration:0.08s; }
+
+#routine-panel .check:hover { border-color:var(--r1); box-shadow:0 0 10px rgba(0,255,135,0.3); }
+#todo-panel   .check:hover { border-color:var(--t1); box-shadow:0 0 10px rgba(255,179,71,0.3); }
+
+.item.done .check {
+  background: linear-gradient(135deg,var(--r3),var(--r1));
+  border-color:transparent;
+  box-shadow:0 0 14px rgba(0,255,135,0.45);
+  transform:scale(1);
+}
+
+.check-icon {
+  display:none;
+  width:5px; height:9px;
+  border:1.5px solid #000;
+  border-top:none; border-left:none;
+  transform:rotate(45deg) translateY(-1px);
+}
+.item.done .check-icon { display:block; }
+
+.item-text {
+  flex:1;
+  font-size:0.88rem;
+  line-height:1.5;
+  word-break:break-word;
+  transition:color 0.2s;
+  letter-spacing:0.01em;
+}
+
+.item.done .item-text {
+  color:var(--muted);
+  text-decoration:line-through;
+  text-decoration-color:rgba(107,127,112,0.5);
+}
+
+.del-btn {
+  background:none;
+  border:none;
+  color:rgba(255,255,255,0.12);
+  cursor:pointer;
+  width:28px; height:28px;
+  border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.75rem;
+  transition: color 0.2s, background 0.2s, transform 0.15s cubic-bezier(.34,1.56,.64,1);
+  flex-shrink:0;
+}
+.del-btn:hover { color:rgba(255,80,80,0.9); background:rgba(255,60,60,0.1); transform:scale(1.2); }
+.del-btn:active { transform:scale(0.85) !important; transition-duration:0.08s; }
+
+/* ── EMPTY ── */
+.empty {
+  text-align:center;
+  padding:48px 0;
+  display:none;
+}
+
+.empty-icon {
+  font-size:2rem;
+  display:block;
+  margin-bottom:10px;
+  filter:grayscale(0.5);
+  opacity:0.4;
+}
+
+.empty-text {
+  font-size:0.8rem;
+  color:var(--muted);
+  letter-spacing:0.06em;
+}
+
+/* ══════════════════════════════
+   MAXIMUM SMOOTH SYSTEM
+══════════════════════════════ */
+* { -webkit-tap-highlight-color: transparent; }
+
+html {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  /* GPU composite layer for whole page */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+}
+
+/* Promote interactive elements to own GPU layers */
+.item, .tab-btn, .btn-add, .check, .pill-btn, .stat, .progress-card, .input-wrap, .tabs {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000px;
+  perspective: 1000px;
+}
+
+/* Paint containment — prevents scroll repaints */
+.item        { contain: layout style paint; }
+.stat        { contain: layout style paint; }
+.progress-card { contain: layout style paint; }
+.tabs        { contain: layout style paint; }
+
+/* Smooth font rendering */
+body, input, button {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Touch targets — bigger = easier tap */
+.check  { min-width: 28px; min-height: 28px; touch-action: manipulation; }
+.btn-add { touch-action: manipulation; }
+.pill-btn { touch-action: manipulation; min-height: 32px; }
+.tab-btn { touch-action: manipulation; }
+.del-btn { touch-action: manipulation; min-width: 32px; min-height: 32px; }
+
+/* Mobile: flatten heavy transitions */
+@media (max-width: 768px) {
+  .item {
+    transition: border-color 0.12s ease, background 0.12s ease !important;
+  }
+  .item:hover  { transform: translateZ(0) !important; box-shadow: none !important; }
+  .item:active { transform: scale(0.975) translateZ(0) !important; transition-duration: 0.05s !important; }
+  .check       { transition: border-color 0.12s, background 0.12s, transform 0.12s cubic-bezier(.34,1.56,.64,1) !important; }
+  .btn-add     { transition: transform 0.12s cubic-bezier(.34,1.56,.64,1), box-shadow 0.12s !important; }
+  .pill-btn    { transition: color 0.1s, border-color 0.1s, background 0.1s !important; transform: translateZ(0) !important; }
+  .input-wrap input:focus { transform: translateZ(0) !important; }
+  .tab-btn:active { transform: scale(0.93) translateZ(0) !important; }
+}
+
+.divider {
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--border),transparent);
+  margin:10px 0 20px;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo-line">
+      <div class="logo-dot"></div>
+      <h1><span>Daily</span> Task</h1>
+      <div class="logo-dot" style="animation-delay:1.2s"></div>
+    </div>
+    <div class="header-sub">Daily Planner — Premium</div>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active-routine" id="tab-routine" onclick="switchTab('routine')">
+      <span>⬡</span> Routine List
+      <span class="tab-badge" id="badge-routine">0</span>
+    </button>
+    <div class="tab-sep"></div>
+    <button class="tab-btn" id="tab-todo" onclick="switchTab('todo')">
+      <span>◈</span> TO-DO List
+      <span class="tab-badge" id="badge-todo">0</span>
+    </button>
+  </div>
+
+  <!-- ROUTINE PANEL -->
+  <div class="panel active" id="routine-panel">
+    <div class="input-wrap">
+      <textarea id="routine-input" placeholder="နေ့စဉ် routine တစ်ခု ထည့်ပါ…&#10;(Enter = နောက်ကြောင်း, Shift+Enter = သိမ်းမည်)" rows="1" autocomplete="off"></textarea>
+      <button class="btn-add btn-add-routine" onclick="addItem('routine')">+</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat routine-stat">
+        <span class="stat-num" id="r-total">0</span>
+        <div class="stat-label">စုစုပေါင်း</div>
+      </div>
+      <div class="stat routine-stat">
+        <span class="stat-num" id="r-done">0</span>
+        <div class="stat-label">ပြီးပြီ</div>
+      </div>
+      <div class="stat routine-stat">
+        <span class="stat-num" id="r-left">0</span>
+        <div class="stat-label">ကျန်သည်</div>
+      </div>
+    </div>
+
+    <div class="progress-card">
+      <div class="progress-top">
+        <span class="progress-title">Progress</span>
+        <span class="progress-pct r-text" id="r-pct">0%</span>
+      </div>
+      <div class="bar-bg"><div class="bar-fill bar-routine" id="r-bar"></div></div>
+    </div>
+
+    <div class="list-header">
+      <span class="list-label">Routine Items</span>
+      <div class="hdr-actions">
+        <button class="pill-btn green" onclick="resetRoutine()">↺ Reset Day</button>
+        <button class="pill-btn green" onclick="clearDone('routine')">✕ Clear Done</button>
+      </div>
+    </div>
+
+    <ul id="routine-list"></ul>
+    <div class="empty" id="r-empty">
+      <span class="empty-icon">⬡</span>
+      <span class="empty-text">Routine item မရှိသေးပါ</span>
+    </div>
+  </div>
+
+  <!-- TODO PANEL -->
+  <div class="panel" id="todo-panel">
+    <div class="input-wrap">
+      <textarea id="todo-input" placeholder="လုပ်စရာတစ်ခု ထည့်ပါ…&#10;(Enter = နောက်ကြောင်း, Shift+Enter = သိမ်းမည်)" rows="1" autocomplete="off"></textarea>
+      <button class="btn-add btn-add-todo" onclick="addItem('todo')">+</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat todo-stat">
+        <span class="stat-num" id="t-total">0</span>
+        <div class="stat-label">စုစုပေါင်း</div>
+      </div>
+      <div class="stat todo-stat">
+        <span class="stat-num" id="t-done">0</span>
+        <div class="stat-label">ပြီးပြီ</div>
+      </div>
+      <div class="stat todo-stat">
+        <span class="stat-num" id="t-left">0</span>
+        <div class="stat-label">ကျန်သည်</div>
+      </div>
+    </div>
+
+    <div class="progress-card">
+      <div class="progress-top">
+        <span class="progress-title">Progress</span>
+        <span class="progress-pct t-text" id="t-pct">0%</span>
+      </div>
+      <div class="bar-bg"><div class="bar-fill bar-todo" id="t-bar"></div></div>
+    </div>
+
+    <div class="list-header">
+      <span class="list-label">Task Items</span>
+      <div class="hdr-actions">
+        <button class="pill-btn amber" onclick="clearDone('todo')">✕ Clear Done</button>
+      </div>
+    </div>
+
+    <ul id="todo-list"></ul>
+    <div class="empty" id="t-empty">
+      <span class="empty-icon">◈</span>
+      <span class="empty-text">Task မရှိသေးပါ</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const store = JSON.parse(localStorage.getItem('planner-v3') || '{"routine":[],"todo":[]}');
+
+const save = () => localStorage.setItem('planner-v3', JSON.stringify(store));
+const esc  = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function switchTab(t) {
+  document.getElementById('routine-panel').classList.toggle('active', t==='routine');
+  document.getElementById('todo-panel').classList.toggle('active', t==='todo');
+  document.getElementById('tab-routine').className = 'tab-btn' + (t==='routine' ? ' active-routine' : '');
+  document.getElementById('tab-todo').className    = 'tab-btn' + (t==='todo'    ? ' active-todo'    : '');
+}
+
+function render(t) {
+  const items = store[t];
+  const list  = document.getElementById(t==='routine' ? 'routine-list' : 'todo-list');
+  const empty = document.getElementById(t==='routine' ? 'r-empty' : 't-empty');
+  const pre   = t==='routine' ? 'r' : 't';
+  const numCls = t==='routine' ? 'num-r' : 'num-t';
+
+  list.innerHTML = '';
+  empty.style.display = items.length ? 'none' : 'block';
+
+  items.forEach((item,i) => {
+    const li = document.createElement('li');
+    li.className = 'item' + (item.done ? ' done' : '');
+    li.innerHTML = `
+      <span class="num ${numCls}">${String(i+1).padStart(2,'0')}</span>
+      <div class="check" onclick="toggle('${t}',${i})"><div class="check-icon"></div></div>
+      <span class="item-text">${escMulti(item.text)}</span>
+      <button class="del-btn" onclick="del('${t}',${i})">✕</button>`;
+    list.appendChild(li);
+  });
+
+  const total = items.length;
+  const done  = items.filter(x=>x.done).length;
+  const pct   = total ? Math.round(done/total*100) : 0;
+
+  document.getElementById(pre+'-total').textContent = total;
+  document.getElementById(pre+'-done').textContent  = done;
+  document.getElementById(pre+'-left').textContent  = total-done;
+  document.getElementById(pre+'-pct').textContent   = pct+'%';
+  document.getElementById(pre+'-bar').style.width   = pct+'%';
+
+  const id = t==='routine' ? 'badge-routine' : 'badge-todo';
+  document.getElementById(id).textContent = total;
+}
+
+function addItem(t) {
+  const inp = document.getElementById(t+'-input');
+  const txt = inp.value.trim();
+  if(!txt){ inp.focus(); return; }
+  store[t].push({text:txt,done:false});
+  save(); render(t);
+  inp.value=''; inp.focus();
+}
+
+function toggle(t,i){ store[t][i].done=!store[t][i].done; save(); render(t); }
+function del(t,i){
+  // animate out before removing
+  const list = document.getElementById(t==='routine'?'routine-list':'todo-list');
+  const li = list.children[i];
+  if(li){
+    li.style.transition='all 0.22s cubic-bezier(.4,0,1,1)';
+    li.style.transform='translateX(18px) scale(0.95)';
+    li.style.opacity='0';
+    li.style.maxHeight=li.offsetHeight+'px';
+    setTimeout(()=>{ li.style.maxHeight='0'; li.style.padding='0'; li.style.margin='0'; }, 150);
+    setTimeout(()=>{ store[t].splice(i,1); save(); render(t); }, 280);
+  } else {
+    store[t].splice(i,1); save(); render(t);
+  }
+}
+function clearDone(t){ store[t]=store[t].filter(x=>!x.done); save(); render(t); }
+function resetRoutine(){ store.routine=store.routine.map(x=>({...x,done:false})); save(); render('routine'); }
+
+['routine','todo'].forEach(t => {
+  const ta = document.getElementById(t+'-input');
+
+  ta.addEventListener('keydown', e => {
+    if(e.key==='Enter' && e.shiftKey){ e.preventDefault(); addItem(t); }
+  });
+
+  // Debounced auto-resize — no reflow on every keystroke
+  let resizeTimer;
+  ta.addEventListener('input', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      ta.style.height = 'auto';
+      ta.style.height = ta.scrollHeight + 'px';
+    }, 80);
+  });
+
+  // Pause canvas while typing
+  ta.addEventListener('focus', () => { window.typing = true; });
+  ta.addEventListener('blur',  () => { window.typing = false; });
+});
+
+// Item text: preserve newlines as <br>
+const escMulti = s => s
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  .replace(/\n/g,'<br>');
+
+render('routine');
+render('todo');
+
+// Passive listeners — smooth scroll/touch
+window.rIC = window.requestIdleCallback || (cb => setTimeout(cb, 1));
+document.addEventListener('touchstart', ()=>{}, {passive:true});
+document.addEventListener('touchmove',  ()=>{}, {passive:true});
+document.addEventListener('wheel',      ()=>{}, {passive:true});
+
+// Pause canvas animation while scrolling
+window.scrolling = false;
+let scrollTimer;
+window.addEventListener('scroll', () => {
+  window.scrolling = true;
+  clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(() => { window.scrolling = false; }, 150);
+}, {passive:true});
+</script>
+
+<!-- ══ OCTOPUS + ELECTRIC ══ -->
+<canvas id="bgCanvas" style="position:fixed;top:0;left:0;width:100%;height:160px;pointer-events:none;z-index:9998;will-change:transform;"></canvas>
+<canvas id="octoCanvas" style="position:fixed;top:0;left:0;width:100%;height:160px;pointer-events:none;z-index:9999;will-change:transform;"></canvas>
+<script>
+(function(){
+  /* ═══════════════════════════════
+     ELECTRIC LABEL ANIMATION
+  ═══════════════════════════════ */
+  const elCanvas = document.getElementById('bgCanvas');
+  const elCtx    = elCanvas.getContext('2d');
+  let EW, EH = 160;
+  function resizeEl(){ EW = elCanvas.width = window.innerWidth; elCanvas.height = EH; }
+  resizeEl();
+  window.addEventListener('resize', resizeEl);
+
+  const bolts = [];
+  let boltTimer = 0;
+
+  function makeBolt(){
+    const hue = Math.random()*360;
+    const segs = [];
+    let cx = Math.random()*EW, cy = 5+Math.random()*EH*0.65;
+    const steps = 5+Math.floor(Math.random()*8);
+    for(let i=0;i<steps;i++){
+      const nx=cx+(Math.random()-0.3)*45, ny=cy+(Math.random()-0.5)*20;
+      segs.push({x1:cx,y1:cy,x2:nx,y2:ny}); cx=nx; cy=ny;
+    }
+    const life=10+Math.random()*12;
+    bolts.push({segs,hue,life,maxLife:life});
+  }
+
+  const particles=[];
+  for(let i=0;i<12;i++) particles.push({
+    x:Math.random()*1400,y:Math.random()*EH,
+    vx:(Math.random()-0.5)*0.55,vy:(Math.random()-0.5)*0.28,
+    r:0.7+Math.random()*2,hue:Math.random()*360,
+    alpha:0.25+Math.random()*0.5,pulse:Math.random()*Math.PI*2
+  });
+
+  let elLast=0, elF=0;
+  function animEl(ts){
+    requestAnimationFrame(animEl);
+    if(ts-elLast < 50) return; // 20fps
+    if(window.typing) return;
+    elLast=ts;
+    elCtx.clearRect(0,0,EW,EH); elF++;
+    particles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.pulse+=0.035;
+      if(p.x<0)p.x=EW; if(p.x>EW)p.x=0;
+      if(p.y<0)p.y=EH; if(p.y>EH)p.y=0;
+      const a=p.alpha*(0.55+Math.sin(p.pulse)*0.45);
+      elCtx.beginPath(); elCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      elCtx.fillStyle=`hsla(${(p.hue+elF*0.4)%360},100%,72%,${a})`; elCtx.fill();
+    });
+    boltTimer++;
+    if(boltTimer>30+Math.random()*20){ boltTimer=0; makeBolt(); if(Math.random()<0.45)makeBolt(); }
+    for(let i=bolts.length-1;i>=0;i--){
+      const b=bolts[i]; b.life--;
+      if(b.life<=0){bolts.splice(i,1);continue;}
+      const a=(b.life/b.maxLife)*0.9;
+      b.segs.forEach(s=>{
+        elCtx.lineCap='round';
+        elCtx.strokeStyle=`hsla(${b.hue},100%,92%,${a})`; elCtx.lineWidth=1.4;
+         
+        elCtx.beginPath(); elCtx.moveTo(s.x1,s.y1); elCtx.lineTo(s.x2,s.y2); elCtx.stroke();
+        elCtx.strokeStyle=`hsla(${b.hue},100%,65%,${a*0.35})`; elCtx.lineWidth=5; 
+        elCtx.beginPath(); elCtx.moveTo(s.x1,s.y1); elCtx.lineTo(s.x2,s.y2); elCtx.stroke();
+        
+      });
+    }
+    requestAnimationFrame(animEl);
+  }
+  animEl(0);
+
+  /* ═══════════════════════════════
+     OCTOPUS
+  ═══════════════════════════════ */
+  const canvas = document.getElementById('octoCanvas');
+  const ctx    = canvas.getContext('2d');
+  const ZONE_H = 160;
+  let W;
+
+  function resize(){ W = canvas.width = window.innerWidth; canvas.height = ZONE_H; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const NUM_ARMS = 8;
+
+  const oc = {
+    x: Math.random()*window.innerWidth,
+    y: 44+Math.random()*72,
+    vx:1.2, vy:0.4,
+    targetAngle: 0,
+    hue: Math.random()*360,
+    phase: 0,
+    burst: false, burstTimer: 0,
+    size: 10,
+  };
+
+  // Each arm has trailing segment positions
+  const arms = Array.from({length:NUM_ARMS}, (_,ai)=>{
+    return {
+      segs: Array.from({length:18}, ()=>({x:oc.x, y:oc.y})),
+      baseAngle: (ai/NUM_ARMS)*Math.PI*2,
+      waveOffset: ai*0.78,
+    };
+  });
+
+  const trail = [];
+  const MAX_TRAIL = 12;
+  let frameCount=0, nextBurst=120+Math.random()*180;
+
+  function pickDir(){
+    const a = Math.random()*Math.PI*2;
+    const spd = oc.burst ? 14.0 : 3.8;
+    oc.vx = Math.cos(a)*spd; oc.vy = Math.sin(a)*spd*0.5;
+    oc.targetAngle = a;
+  }
+  pickDir();
+
+  const MARGIN = 28;
+
+  /* ── TENTACLE — smooth bezier, long & wavy ── */
+  function drawArm(ai, hue, phase){
+    const arm  = arms[ai];
+    const S    = oc.size;
+    const wOff = arm.waveOffset;
+    // spread arms in a fan; rear arms go backward
+    const baseA = arm.baseAngle + oc.targetAngle;
+
+    // Build 3 control points for a cubic bezier tentacle
+    const armLen = S * 4.8;  // long tentacles
+    const waveAmp = S * (1.8 + Math.abs(Math.sin(phase*0.7+wOff))*1.4);
+
+    // start at body rim
+    const sx = Math.cos(baseA)*S*0.9;
+    const sy = Math.sin(baseA)*S*0.9;
+    // mid control — perpendicular wave
+    const midLen = armLen*0.5;
+    const perpA  = baseA + Math.PI*0.5;
+    const waveDir= Math.sin(phase*1.3 + wOff);
+    const mx = sx + Math.cos(baseA)*midLen + Math.cos(perpA)*waveDir*waveAmp;
+    const my = sy + Math.sin(baseA)*midLen + Math.sin(perpA)*waveDir*waveAmp;
+    // end tip — curls the other way
+    const tipLen = armLen;
+    const wave2  = Math.sin(phase*1.1 + wOff + 1.5);
+    const ex = sx + Math.cos(baseA)*tipLen + Math.cos(perpA)*wave2*waveAmp*0.7;
+    const ey = sy + Math.sin(baseA)*tipLen + Math.sin(perpA)*wave2*waveAmp*0.7;
+
+    const ah = (hue + ai*20)%360;
+    const steps = 10;
+
+    // Draw tapered smooth tentacle by sampling bezier
+    for(let i=1; i<=steps; i++){
+      const t0 = (i-1)/steps, t1 = i/steps;
+      const p0 = bezier(sx,sy,mx,my,mx,my,ex,ey,t0);
+      const p1 = bezier(sx,sy,mx,my,mx,my,ex,ey,t1);
+      const frac = 1 - i/steps;
+      const w = S*0.72*frac + 0.6;
+      const segH = (ah + i*3)%360;
+      ctx.lineCap='round';
+      ctx.strokeStyle=`hsla(0,0%,${8+frac*18}%,${0.75+frac*0.2})`;
+      ctx.lineWidth=w;
+       
+      ctx.beginPath(); ctx.moveTo(p0.x,p0.y); ctx.lineTo(p1.x,p1.y); ctx.stroke();
+      
+      // sucker dots every 4th segment
+      if(i%4===0 && frac>0.1){
+        ctx.beginPath(); ctx.arc(p1.x,p1.y,w*0.42,0,Math.PI*2);
+        ctx.fillStyle=`rgba(20,20,20,0.5)`; ctx.fill();
+      }
+    }
+    // curl tip dot — dark
+    ctx.beginPath(); ctx.arc(ex,ey,1.5,0,Math.PI*2);
+    ctx.fillStyle=`rgba(60,0,0,0.9)`; ctx.fill();
+  }
+
+  // Cubic bezier point sampler
+  function bezier(x0,y0,x1,y1,x2,y2,x3,y3,t){
+    const mt=1-t;
+    return {
+      x: mt*mt*mt*x0 + 3*mt*mt*t*x1 + 3*mt*t*t*x2 + t*t*t*x3,
+      y: mt*mt*mt*y0 + 3*mt*mt*t*y1 + 3*mt*t*t*y2 + t*t*t*y3,
+    };
+  }
+
+  /* ── DRAW BODY (mantle + head + eyes + beak) ── */
+  function drawOctopus(hue){
+    const S = oc.size;
+
+    // outer glow — red
+    const grd=ctx.createRadialGradient(0,0,1,0,0,S*2.8);
+    grd.addColorStop(0,`rgba(255,30,30,0.45)`);
+    grd.addColorStop(1,`rgba(255,0,0,0)`);
+    ctx.beginPath(); ctx.arc(0,0,S*2.8,0,Math.PI*2);
+    ctx.fillStyle=grd; ctx.fill();
+
+    // mantle — deep red
+    ctx.beginPath();
+    ctx.ellipse(0,-S*0.65, S*0.72, S*1.05, 0, 0, Math.PI*2);
+    const mGrd=ctx.createRadialGradient(-S*0.2,-S*0.9,1, 0,-S*0.65,S*1.1);
+    mGrd.addColorStop(0,`hsl(0,90%,35%)`);
+    mGrd.addColorStop(1,`hsl(0,100%,10%)`);
+    ctx.fillStyle=mGrd; ctx.fill();
+    ctx.strokeStyle=`hsl(0,100%,60%)`; ctx.lineWidth=1.2;
+     
+    ctx.stroke(); 
+
+    // mantle texture spots
+    for(let i=0;i<5;i++){
+      const sx=-S*0.3+i*S*0.15, sy=-S*0.7+Math.sin(i*1.4)*S*0.28;
+      ctx.beginPath(); ctx.arc(sx,sy,S*0.1,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,80,80,0.25)`; ctx.fill();
+    }
+
+    // head dome — red
+    ctx.beginPath();
+    ctx.ellipse(0,S*0.12, S*0.82, S*0.72, 0, 0, Math.PI*2);
+    const hGrd=ctx.createRadialGradient(-S*0.1,S*0.0,1, 0,S*0.1,S*0.82);
+    hGrd.addColorStop(0,`hsl(0,85%,28%)`);
+    hGrd.addColorStop(1,`hsl(0,100%,8%)`);
+    ctx.fillStyle=hGrd; ctx.fill();
+    ctx.strokeStyle=`hsl(0,100%,50%)`; ctx.lineWidth=1.1;
+     
+    ctx.stroke(); 
+
+    // 2 large eyes
+    [[-S*0.34,S*0.0],[S*0.34,S*0.0]].forEach(([ex,ey])=>{
+      // sclera
+      ctx.beginPath(); ctx.ellipse(ex,ey,S*0.24,S*0.26,0,0,Math.PI*2);
+      ctx.fillStyle=`hsl(${(hue+40)%360},60%,85%)`; ctx.fill();
+      ctx.strokeStyle=`hsl(${hue},100%,60%)`; ctx.lineWidth=0.8; ctx.stroke();
+      // iris
+      ctx.beginPath(); ctx.arc(ex,ey+S*0.02,S*0.16,0,Math.PI*2);
+      ctx.fillStyle=`hsl(${(hue+20)%360},90%,45%)`; ctx.fill();
+      // pupil (W-shaped horizontal slit)
+      ctx.beginPath(); ctx.ellipse(ex,ey+S*0.02,S*0.08,S*0.055,0,0,Math.PI*2);
+      ctx.fillStyle='#050505'; ctx.fill();
+      // highlight
+      ctx.beginPath(); ctx.arc(ex-S*0.06,ey-S*0.06,S*0.055,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.fill();
+    });
+
+    // beak (central mouth)
+    ctx.strokeStyle=`hsl(${(hue+180)%360},100%,70%)`;
+    ctx.lineWidth=1.5;  
+    ctx.beginPath();
+    ctx.moveTo(-S*0.12,S*0.28); ctx.quadraticCurveTo(0,S*0.44,S*0.12,S*0.28);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-S*0.1,S*0.3); ctx.quadraticCurveTo(0,S*0.22,S*0.1,S*0.3);
+    ctx.stroke(); 
+  }
+
+  /* ── TRAIL ── */
+  function drawTrail(){
+    if(trail.length<2) return;
+    for(let i=1;i<trail.length;i++){
+      const a=(i/trail.length)*0.4;
+      const h=(oc.hue-(trail.length-i)*2.5+360)%360;
+      ctx.beginPath();
+      ctx.moveTo(trail[i-1].x,trail[i-1].y);
+      ctx.lineTo(trail[i].x,trail[i].y);
+      ctx.strokeStyle=`hsla(${h},100%,65%,${a})`;
+      ctx.lineWidth=(i/trail.length)*2.5;
+       
+      ctx.stroke(); 
+    }
+  }
+
+  /* ── UPDATE ── */
+  function update(){
+    frameCount++;
+    oc.hue=(oc.hue+(oc.burst?3:1.2))%360;
+    oc.phase+=oc.burst?0.22:0.08;
+
+    if(!oc.burst && frameCount>=nextBurst){
+      oc.burst=true; oc.burstTimer=18+Math.random()*15; pickDir();
+    }
+    if(oc.burst){ oc.burstTimer--; if(oc.burstTimer<=0){ oc.burst=false; nextBurst=frameCount+55+Math.random()*90; pickDir(); }}
+
+    // smooth face direction
+    let da=oc.targetAngle-oc.vx; // just for angle tracking use targetAngle
+    oc.x+=oc.vx; oc.y+=oc.vy;
+
+    let b=false;
+    if(oc.x<MARGIN){oc.x=MARGIN;b=true;}
+    if(oc.x>W-MARGIN){oc.x=W-MARGIN;b=true;}
+    if(oc.y<22){oc.y=22;b=true;}
+    if(oc.y>ZONE_H-22){oc.y=ZONE_H-22;b=true;}
+    if(b)pickDir();
+    if(Math.random()<0.012&&!oc.burst) pickDir();
+
+    trail.push({x:oc.x,y:oc.y});
+    if(trail.length>MAX_TRAIL) trail.shift();
+  }
+
+  /* ── DRAW ── */
+  function draw(){
+    ctx.clearRect(0,0,W,ZONE_H);
+    drawTrail();
+    ctx.save();
+    ctx.translate(oc.x, oc.y);
+    // face direction of travel
+    ctx.rotate(oc.targetAngle + Math.PI*0.5);
+    for(let ai=0;ai<NUM_ARMS;ai++) drawArm(ai, oc.hue, oc.phase);
+    drawOctopus(oc.hue);
+    ctx.restore();
+  }
+
+  let lastT=0;
+  function loop(ts){
+    requestAnimationFrame(loop);
+    if(ts-lastT < 50) return; // 20fps
+    lastT=ts;
+    if(window.scrolling || window.typing) return;
+    update(); draw();
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
